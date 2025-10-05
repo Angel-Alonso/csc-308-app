@@ -1,7 +1,7 @@
 {
   "name": "express-backend.js",
   "version": "1.0.0",
-  "type":"module",
+  "type": "module",
   "description": "",
   "main": "backend.js",
   "scripts": {
@@ -13,5 +13,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
