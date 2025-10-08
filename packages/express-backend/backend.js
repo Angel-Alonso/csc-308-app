@@ -88,7 +88,7 @@ app.delete("/users/:id", (req, res) => {
   const id = req.params.id;
   const deleted = deleteUserById(id);
   if (deleted) {
-    res.status(200).send({ message: `User with id ${id} deleted.` });
+    res.status(204).send();
   } else {
     res.status(404).send({ error: "User not found." });
   }
@@ -100,8 +100,10 @@ const addUser = (user) => {
 
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
-  addUser(userToAdd);
-  res.send();
+  userToAdd.id = Math.floor(Math.random()*10000).toString();
+  const newUser = addUser(userToAdd)
+ 
+  res.status(201).json(newUser);
 });
 app.get("/", (req, res) => {
   res.send("Hello World!");
