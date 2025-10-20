@@ -6,60 +6,56 @@ import "./main.css";
 function MyApp() {
   const [characters, setCharacters] = useState([]);
 
- function removeOneCharacter(id) {
-  fetch(`http://localhost:8000/users/${id}`, {
-    method: "DELETE",
-  })
-    .then((res) => {
+
+   useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const res = await fetch("http://localhost:8000/users");
+        const data = await res.json();
+        setCharacters(data.users_list || []);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchUsers();
+  }, []);
+  async function removeOneCharacter(id) {
+    try {
+      const res = await fetch(`http://localhost:8000/users/${id}`, {
+        method: "DELETE",
+      });
       if (res.status === 204) {
-        setCharacters(characters.filter((character) => character.id !== id));
-      } else if (res.status === 404) {
-        console.log("User not found");
+        setCharacters((prev) => prev.filter((c) => c._id !== id));
       } else {
         console.log("Delete failed, status:", res.status);
       }
-    })
-    .catch((error) => console.log(error));
-}
-
-  
-  
-function fetchUsers() {
-    const promise = fetch("http://localhost:8000/users");
-    return promise;
-}
-useEffect(() => {
-  fetchUsers()
-	  .then((res) => res.json())
-	  .then((json) => setCharacters(json["users_list"]))
-	  .catch((error) => { console.log(error); });
-}, [] );
- function postUser(person) {
-    const promise = fetch("http://localhost:8000/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(person),
-    });
-
-    return promise;
+    } catch (error) {
+      console.log(error);
+    }
   }
+
   
-function updateList(person) { 
-    postUser(person)
-      .then((res) => {
+  
+async function updateList(person) {
+    try {
+      const res = await fetch("http://localhost:8000/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(person),
+      });
       if (res.status === 201) {
-        return res.json(); 
+        const newUser = await res.json();
+        setCharacters((prev) => [...prev, newUser]);
       } else {
         throw new Error("Failed to create user");
       }
-    })
-    .then((newUser) => {
-      setCharacters(prevCharacters => [...prevCharacters, newUser]);
-    })
-    .catch((error) => console.log(error));
+    } catch (error) {
+      console.log(error);
+    }
   }
+
+
 
 
   return (
